@@ -26,5 +26,8 @@ case "$(uname -s)" in
     ;;
 esac
 
-# Machine-specific settings, deliberately not version-controlled
-[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+if [[ -r "$HOME/.zshrc.local" ]]; then
+  source "$HOME/.zshrc.local"
+fi
+
+true
