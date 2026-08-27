@@ -1,0 +1,6 @@
+*.local
+*.secret
+secrets/
+.DS_Store
+._*
+__MACOSX/

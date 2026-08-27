@@ -1,0 +1,30 @@
+source "$HOME/.dotfiles/zsh/common.zsh"
+
+case "$(uname -s)" in
+  Darwin)
+    source "$HOME/.dotfiles/zsh/macos.zsh"
+    ;;
+
+  Linux)
+    source "$HOME/.dotfiles/zsh/linux.zsh"
+
+    if [[ -r /etc/os-release ]]; then
+      source /etc/os-release
+
+      case "$ID" in
+        fedora)
+          source "$HOME/.dotfiles/zsh/fedora.zsh"
+          ;;
+        cachyos)
+          source "$HOME/.dotfiles/zsh/cachyos.zsh"
+          ;;
+        ubuntu)
+          source "$HOME/.dotfiles/zsh/ubuntu.zsh"
+          ;;
+      esac
+    fi
+    ;;
+esac
+
+# Machine-specific settings, deliberately not version-controlled
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
