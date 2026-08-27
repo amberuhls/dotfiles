@@ -1,4 +1,7 @@
+# -------------------------------------------------------------------
 # Preferred programs
+# -------------------------------------------------------------------
+
 export EDITOR="micro"
 export VISUAL="micro"
 export PAGER="less"
@@ -7,7 +10,10 @@ export LESS="-FRX"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 
+# -------------------------------------------------------------------
 # History
+# -------------------------------------------------------------------
+
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
@@ -19,14 +25,20 @@ setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
 
+# -------------------------------------------------------------------
 # Completion
+# -------------------------------------------------------------------
+
 autoload -Uz compinit
 compinit
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' menu select
 
-# Modern CLI aliases
+# -------------------------------------------------------------------
+# Modern CLI tools
+# -------------------------------------------------------------------
+
 if command -v eza >/dev/null 2>&1; then
   alias ls='eza --group-directories-first'
   alias ll='eza -lah --group-directories-first --git'
@@ -41,30 +53,13 @@ fi
 
 alias grep='grep --color=auto'
 
-# bat as cat
-unalias cat 2>/dev/null
+# cat remains the normal Unix cat.
+# bat has its own config in ~/.config/bat/config.
 
-if command -v bat >/dev/null 2>&1; then
-  cat() {
-    if [[ "$1" == "-p" || "$1" == "--page" ]]; then
-      shift
-      bat --paging=always "$@"
-    else
-      bat --paging=never "$@"
-    fi
-  }
-elif command -v batcat >/dev/null 2>&1; then
-  cat() {
-    if [[ "$1" == "-p" || "$1" == "--page" ]]; then
-      shift
-      batcat --paging=always "$@"
-    else
-      batcat --paging=never "$@"
-    fi
-  }
-fi
+# -------------------------------------------------------------------
+# File operations
+# -------------------------------------------------------------------
 
-# Safer file operations
 alias rm='rm -I'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -72,17 +67,24 @@ alias md='mkdir -p'
 
 alias df='df -h'
 
-# Navigation
+# -------------------------------------------------------------------
+# Directory navigation
+# -------------------------------------------------------------------
+
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
+# Use zoxide in place of interactive cd
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
 
+# -------------------------------------------------------------------
 # Shortcuts
+# -------------------------------------------------------------------
+
 alias c='clear'
 alias h='history'
 alias zshconfig='micro ~/.zshrc'
@@ -92,7 +94,10 @@ showpath() {
   print -l $path
 }
 
+# -------------------------------------------------------------------
 # Git
+# -------------------------------------------------------------------
+
 alias g='git'
 alias ga='git add'
 alias gaa='git add --all'
@@ -108,14 +113,21 @@ alias gpf='git push --force-with-lease'
 alias gpl='git pull --ff-only'
 alias gs='git status -sb'
 
+# -------------------------------------------------------------------
 # Python / Node
+# -------------------------------------------------------------------
+
 alias py='python3'
+
 alias ni='npm install'
 alias nr='npm run'
 alias nrd='npm run dev'
 alias nrs='npm run start'
 
+# -------------------------------------------------------------------
 # Functions
+# -------------------------------------------------------------------
+
 mcd() {
   if [[ $# -ne 1 ]]; then
     echo "Usage: mcd DIRECTORY" >&2
@@ -131,7 +143,10 @@ serve() {
   python3 -m http.server "$port"
 }
 
+# -------------------------------------------------------------------
 # fzf
+# -------------------------------------------------------------------
+
 if command -v fzf >/dev/null 2>&1; then
   if fzf --zsh >/dev/null 2>&1; then
     source <(fzf --zsh)
@@ -141,6 +156,7 @@ fi
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --inline-info"
 export FZF_CTRL_R_OPTS="--sort --exact"
 
+# Prefix-based history search
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 
