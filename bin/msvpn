@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+
+set -e
+
+case "${1:-up}" in
+    up)
+        if nmcli -t -f NAME,TYPE connection show --active |
+            grep -qx 'Mount Sinai VPN:vpn'; then
+            echo "Mount Sinai VPN is already connected."
+            exit 0
+        fi
+
+        read -rs "MRH?Paste MRHSession: "
+        printf '\n'
+        trap 'unset MRH' EXIT
+
+        {
+            printf 'vpn.secrets.cookie:MRHSession=%s\n' "$MRH"
+            printf 'vpn.secrets.gateway:mshmsvpn.mssm.edu\n'
+            printf 'vpn.secrets.gwcert:\n'
+        } | nmcli connection up "Mount Sinai VPN" passwd-file /dev/stdin
+        ;;
+
+    down)
+        nmcli connection down "Mount Sinai VPN"
+        ;;
+
+    status)
+        nmcli connection show --active |
+            grep -E '(^NAME|Mount Sinai VPN|vpn0)'
+        ;;
+
+    *)
+        echo "Usage: msvpn [up|down|status]"
+        exit 2
+        ;;
+esac
