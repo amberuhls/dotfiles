@@ -36,7 +36,6 @@ link_file() {
 
 setup_common_dotfiles() {
   link_file "$DOTFILES/zsh/zshrc" "$HOME/.zshrc"
-  link_file "$DOTFILES/bat/config" "$HOME/.config/bat/config"
   link_file "$DOTFILES/git/ignore" "$HOME/.config/git/ignore"
   link_file "$DOTFILES/bin/msvpn" "$HOME/.local/bin/msvpn"
 
