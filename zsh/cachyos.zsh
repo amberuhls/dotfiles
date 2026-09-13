@@ -4,13 +4,6 @@ alias update='sudo pacman -Syu'
 alias cleanch='sudo pacman -Scc'
 alias jctl='journalctl -p 3 -xb'
 
-# Powerlevel10k
-if [[ -r /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme ]]; then
-  source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
-fi
-
-[[ -r "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
-
 # Plugins
 if [[ -r /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
   source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh

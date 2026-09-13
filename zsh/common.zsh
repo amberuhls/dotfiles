@@ -54,7 +54,7 @@ fi
 alias grep='grep --color=auto'
 
 # cat remains the normal Unix cat.
-# bat has its own config in ~/.config/bat/config.
+# bat uses its default appearance and paging.
 
 # -------------------------------------------------------------------
 # File operations

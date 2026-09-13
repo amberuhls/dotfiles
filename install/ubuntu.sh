@@ -14,7 +14,9 @@ sudo apt install -y \
   micro \
   ripgrep \
   zoxide \
-  zsh
+  zsh \
+  zsh-autosuggestions \
+  zsh-syntax-highlighting
 
 source "$DOTFILES/install/common.sh"
 
