@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$HOME/.local/share/dotfiles/minerva"
+if [[ ! -x "$root/env/bin/zsh" ]]; then
+  echo 'Run bash ~/.dotfiles/install/minerva.sh first.' >&2
+  exit 1
+fi
+
+export DOTFILES_MINERVA=1
+export PATH="$root/bin:$PATH"
+exec "$root/env/bin/zsh" -i "$@"

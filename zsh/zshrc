@@ -22,6 +22,10 @@ case "$(uname -s)" in
     ;;
 esac
 
+if [[ ${DOTFILES_MINERVA:-} == 1 ]]; then
+  source "$HOME/.dotfiles/zsh/minerva.zsh"
+fi
+
 source "$HOME/.dotfiles/zsh/prompt.zsh"
 
 if [[ -r "$HOME/.zshrc.local" ]]; then

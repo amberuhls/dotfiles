@@ -9,6 +9,10 @@ bash ~/.dotfiles/install/fedora.sh
 # or: bash ~/.dotfiles/install/cachyos.sh
 ```
 
+For **Minerva (Rocky Linux 9, no root access)**, follow
+[the Minerva instructions](install/minerva.md). Its separate user-only installer
+uses Miniforge and leaves Bash login files and research environments in place.
+
 Installers install CLI tools and Zsh plugins, back up existing non-symlink
 configuration, and link the shared files. They print instructions for changing
 your default shell when needed. Start a fresh shell with `exec zsh` afterward.
