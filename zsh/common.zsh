@@ -40,11 +40,11 @@ zstyle ':completion:*' menu select
 # -------------------------------------------------------------------
 
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --group-directories-first --icons'
-  alias ll='eza -lah --group-directories-first --git --icons'
-  alias la='eza -a --group-directories-first --icons'
-  alias l='eza -lah --group-directories-first --icons'
-  alias tree='eza --tree --icons'
+  alias ls='eza --icons --group-directories-first'
+  alias ll='eza --icons -lah --group-directories-first --git'
+  alias la='eza --icons -a --group-directories-first'
+  alias l='eza --icons -lah --group-directories-first'
+  alias tree='eza --icons --tree'
 fi
 
 if command -v btop >/dev/null 2>&1; then
