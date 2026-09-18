@@ -8,6 +8,9 @@ case "$(uname -s)" in
       source /etc/os-release
 
       case "$ID" in
+        arch)
+          source "$HOME/.dotfiles/zsh/arch.zsh"
+          ;;
         fedora)
           source "$HOME/.dotfiles/zsh/fedora.zsh"
           ;;
