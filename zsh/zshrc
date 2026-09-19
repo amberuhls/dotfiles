@@ -17,6 +17,9 @@ case "$(uname -s)" in
         ubuntu)
           source "$HOME/.dotfiles/zsh/ubuntu.zsh"
           ;;
+        debian)
+          source "$HOME/.dotfiles/zsh/debian.zsh"
+          ;;
       esac
     fi
     ;;
