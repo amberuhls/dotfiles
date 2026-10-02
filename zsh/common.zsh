@@ -21,6 +21,8 @@ SAVEHIST=50000
 
 setopt APPEND_HISTORY
 setopt INC_APPEND_HISTORY
+setopt EXTENDED_HISTORY
+unsetopt SHARE_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
@@ -89,6 +91,7 @@ fi
 
 alias c='clear'
 alias h='history'
+alias ht='fc -li'
 alias zshconfig='micro ~/.zshrc'
 alias reload='source ~/.zshrc'
 

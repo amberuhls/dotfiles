@@ -36,6 +36,14 @@ bold yellow. Detached Git HEADs show a short commit ID. Failed commands show a
 red `✘` and exit code; root shells use a red `#` marker. The prompt remains in
 scrollback and avoids Git working-tree scans.
 
+Commands taking at least five seconds add a duration such as `12.3s`. This is
+elapsed foreground command-line time, not CPU time or background-job duration.
+Blank prompts do not accumulate idle time. Root's entire `user@hostname` label
+is bold red. SSH sessions show `ssh`; Distrobox shows `box:name`, and other
+recognized containers show `container` or `container:runtime`. Detection uses
+environment variables and standard Docker/Podman marker files; it is a visual
+cue, not a guarantee of isolation. No container commands run during prompting.
+
 Environment indicators update before each prompt and disappear on deactivation:
 
 - `venv:name` for activated Python venvs (`VIRTUAL_ENV`), including tools that
@@ -60,6 +68,12 @@ the managed configuration no longer loads `~/.p10k.zsh` or Oh My Zsh. Existing
 theme files and installed fonts are left on disk.
 
 ## Shell utilities
+
+History records timestamps for new commands. Use `ht` to list history with
+dates and times; `h` keeps the existing plain listing. Commands are still saved
+as they are entered, and running shells do not automatically import each
+other's history. New shells can read previously saved commands. Existing
+history is retained; older entries cannot acquire accurate timestamps retroactively.
 
 `ls`, `ll`, `la`, `l`, and `tree` use eza without icons, including when
 `EZA_ICONS_AUTO` is set elsewhere. Reloading the configuration keeps PATH entries

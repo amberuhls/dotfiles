@@ -30,9 +30,9 @@ class ShellQualityTests(unittest.TestCase):
         path.write_text("#!/bin/sh\n" + code + "\n")
         path.chmod(0o755)
 
-    def zsh(self, code, source="common"):
+    def zsh(self, code, source="common", interactive=False):
         result = subprocess.run(
-            ["zsh", "-f", "-c",
+            ["zsh", "-f", *(["-i"] if interactive else []), "-c",
              f'source "$HOME/.dotfiles/zsh/{source}.zsh"\n' + code],
             env=self.env, cwd=self.home, capture_output=True, text=True,
         )
@@ -57,6 +57,16 @@ serve 9000 0.0.0.0
 ''')
         self.assertIn("http.server\n8000\n--bind\n127.0.0.1", output)
         self.assertIn("http.server\n9000\n--bind\n0.0.0.0", output)
+
+    def test_timestamped_history_without_live_sharing(self):
+        self.zsh('''
+[[ -o extendedhistory && -o incappendhistory && ! -o sharehistory ]] || exit 1
+[[ $aliases[ht] == 'fc -li' && $aliases[h] == history ]] || exit 2
+print -s -- 'echo synthetic-history-entry'
+fc -W "$HISTFILE"
+''', interactive=True)
+        history = (self.home / ".zsh_history").read_text()
+        self.assertRegex(history, r": \d+:\d+;echo synthetic-history-entry")
 
     def test_serve_rejects_invalid_arguments_before_running_python(self):
         self.zsh('''

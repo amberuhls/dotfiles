@@ -54,7 +54,8 @@ print -r -- "$PROMPT"
         self.assertIn("venv:demo-project", output[1])
         self.assertIn("✔", output[1])
         self.assertNotIn("venv:", output[2])
-        self.assertTrue(all(line.startswith("%F{blue}") for line in output))
+        identity = "%B%F{red}" if os.geteuid() == 0 else "%F{blue}"
+        self.assertTrue(all(line.startswith(identity) for line in output))
 
     def test_nested_and_named_environments(self):
         output = self.run_zsh('''
@@ -88,6 +89,7 @@ print -P -- "$PROMPT"
         output = self.run_zsh('''
 source "$PROMPT_FILE"
 [[ ${(M)#precmd_functions:#dotfiles_precmd} == 1 ]] || exit 1
+[[ ${(M)#preexec_functions:#dotfiles_preexec} == 1 ]] || exit 3
 [[ $VIRTUAL_ENV_DISABLE_PROMPT == 1 && $CONDA_CHANGEPS1 == false ]] || exit 2
 dotfiles_precmd
 print -r -- "$PROMPT"
@@ -96,6 +98,38 @@ print -r -- "$PROMPT"
         self.assertNotIn("venv:", output)
         self.assertNotIn("conda:", output)
         self.assertNotIn("nix:", output)
+
+    def test_duration_threshold_status_and_reset(self):
+        output = self.run_zsh('''
+dotfiles_preexec
+(( _dotfiles_command_started -= 7 ))
+false
+dotfiles_precmd
+print -r -- "$PROMPT"
+dotfiles_precmd
+print -r -- "$PROMPT"
+dotfiles_preexec
+dotfiles_precmd
+print -r -- "$PROMPT"
+''').splitlines()
+        self.assertRegex(output[0], r"7\.\ds")
+        self.assertIn("✘ 1", output[0])
+        self.assertNotRegex(output[1], r"\d+\.\ds")
+        self.assertNotRegex(output[2], r"\d+\.\ds")
+
+    def test_ssh_and_distrobox_context(self):
+        output = self.run_zsh('dotfiles_precmd; print -r -- "$PROMPT"',
+                              SSH_CONNECTION="192.0.2.1 1234 192.0.2.2 22",
+                              CONTAINER_ID="steamos-dotfiles")
+        self.assertIn("ssh box:steamos-dotfiles", output)
+        self.assertEqual(len(output.splitlines()), 1)
+
+    def test_container_context_is_not_prompt_code(self):
+        output = self.run_zsh('dotfiles_precmd; print -P -- "$PROMPT"',
+                              container="podman%F{red}$(touch PWNED)\n")
+        self.assertIn("container:podman%F{red}$(touch PWNED)", output)
+        self.assertFalse((self.home / "PWNED").exists())
+        self.assertEqual(len(output.splitlines()), 1)
 
 
 if __name__ == "__main__":
