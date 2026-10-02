@@ -52,6 +52,7 @@ link_file "$DOTFILES/zsh/zshrc" "$HOME/.zshrc"
 link_file "$DOTFILES/git/ignore" "$HOME/.config/git/ignore"
 "$prefix/bin/git" config --global core.excludesfile "$HOME/.config/git/ignore"
 link_file "$DOTFILES/bin/minerva-zsh" "$HOME/.local/bin/minerva-zsh"
+link_file "$DOTFILES/bin/dotfiles" "$HOME/.local/bin/dotfiles"
 
 echo 'Minerva setup complete. Start with: ~/.local/bin/minerva-zsh'
 echo 'Update later with: git -C ~/.dotfiles pull --ff-only && bash ~/.dotfiles/install/minerva.sh'

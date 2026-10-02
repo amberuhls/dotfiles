@@ -51,7 +51,7 @@ absolute path or using a one-off command such as `uv run` does not activate the
 parent shell. No environment manager or interpreter is run to build the labels.
 The prompt disables venv/Conda's own prompt prefixes to avoid duplicates.
 
-Prompt checks: `python3 -B -m unittest discover -s tests -v` (requires Zsh and Python 3).
+Shell checks: `python3 -B -m unittest discover -s tests -v` (requires Zsh and Python 3).
 
 Configuration loads shared settings, Linux and distro settings, the shared
 prompt, then optional `~/.zshrc.local` overrides. Put machine-specific settings
@@ -59,12 +59,51 @@ there. Remove any old theme initialization from that local file when migrating;
 the managed configuration no longer loads `~/.p10k.zsh` or Oh My Zsh. Existing
 theme files and installed fonts are left on disk.
 
+## Shell utilities
+
+`ls`, `ll`, `la`, `l`, and `tree` use eza without icons, including when
+`EZA_ICONS_AUTO` is set elsewhere. Reloading the configuration keeps PATH entries
+unique. fzf uses its built-in Zsh integration when available and falls back to
+distro or installation-prefix scripts on older versions.
+
+`serve` serves the current directory on loopback by default:
+
+```sh
+serve                       # 127.0.0.1:8000
+serve 9000                  # 127.0.0.1:9000
+serve 9000 0.0.0.0           # explicitly listen on all IPv4 interfaces
+```
+
+## Checking an installation
+
+```sh
+dotfiles doctor
+```
+
+The distro and Minerva installers link this command into `~/.local/bin`.
+For an existing setup, rerun its installer after pulling, or run the checker
+directly without reinstalling packages:
+
+```sh
+bash ~/.dotfiles/bin/dotfiles doctor
+```
+
+The checker reports incorrect or missing managed symlinks, missing CLI tools
+(including Debian's `batcat`/`fdfind` alternatives), and plugin file availability.
+On systems with a KDE session or KDE 6 tools, it also checks KDE utility commands,
+the Konsole font and profile's existence, and per-screen desktop prerequisites.
+It does not compare every KDE setting or verify that plugins are loaded into the
+current shell. It changes no configuration and returns 1 if there are warnings,
+0 otherwise. Run it inside `minerva-zsh` on Minerva or the CLI Distrobox on
+SteamOS so it sees the tools you actually use.
+
 ## Layout
 
 - `install/`: distro installers and shared symlink setup.
 - `zsh/`: shared shell behavior, native prompt, and distro integrations.
 - `git/ignore`: global Git ignore rules.
 - `bin/msvpn`: NetworkManager helper for the Mount Sinai VPN.
+- `bin/dotfiles`: read-only installation checks.
 - `konsole/`: shared terminal profile and default-profile setting.
 - `kde/`: portable window-management settings and shortcuts; see
   [KDE setup](kde/README.md) for the separate preview/apply workflow.

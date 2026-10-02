@@ -38,6 +38,7 @@ setup_common_dotfiles() {
   link_file "$DOTFILES/zsh/zshrc" "$HOME/.zshrc"
   link_file "$DOTFILES/git/ignore" "$HOME/.config/git/ignore"
   link_file "$DOTFILES/bin/msvpn" "$HOME/.local/bin/msvpn"
+  link_file "$DOTFILES/bin/dotfiles" "$HOME/.local/bin/dotfiles"
 
   git config --global core.excludesfile "$HOME/.config/git/ignore"
 }

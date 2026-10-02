@@ -7,6 +7,7 @@ export VISUAL="micro"
 export PAGER="less"
 export LESS="-FRX"
 
+typeset -U path PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 
@@ -41,11 +42,11 @@ zstyle ':completion:*' menu select
 # -------------------------------------------------------------------
 
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --icons --group-directories-first'
-  alias ll='eza --icons -lah --group-directories-first --git'
-  alias la='eza --icons -a --group-directories-first'
-  alias l='eza --icons -lah --group-directories-first'
-  alias tree='eza --icons --tree'
+  alias ls='eza --icons=never --group-directories-first'
+  alias ll='eza --icons=never -lah --group-directories-first --git'
+  alias la='eza --icons=never -a --group-directories-first'
+  alias l='eza --icons=never -lah --group-directories-first'
+  alias tree='eza --icons=never --tree'
 fi
 
 if command -v btop >/dev/null 2>&1; then
@@ -140,19 +141,20 @@ mcd() {
 
 serve() {
   local port="${1:-8000}"
-  echo "Serving current directory on http://localhost:$port"
-  python3 -m http.server "$port"
+  local address="${2:-127.0.0.1}"
+  if (( $# > 2 )) || [[ "$port" != <1-65535> || -z "$address" ]]; then
+    print -u2 'Usage: serve [PORT [BIND_ADDRESS]]'
+    return 2
+  fi
+  print -r -- "Serving current directory on address $address, port $port"
+  python3 -m http.server "$port" --bind "$address"
 }
 
 # -------------------------------------------------------------------
 # fzf
 # -------------------------------------------------------------------
 
-if command -v fzf >/dev/null 2>&1; then
-  if fzf --zsh >/dev/null 2>&1; then
-    source <(fzf --zsh)
-  fi
-fi
+source "$HOME/.dotfiles/zsh/fzf.zsh"
 
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --inline-info"
 export FZF_CTRL_R_OPTS="--sort --exact"

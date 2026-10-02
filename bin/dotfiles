@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+if [[ $# != 1 || $1 != doctor ]]; then
+  echo 'Usage: dotfiles doctor'
+  exit 2
+fi
+
+warnings=0
+ok() { printf 'OK    %s\n' "$*"; }
+warn() { printf 'WARN  %s\n' "$*"; warnings=$((warnings + 1)); }
+
+check_link() {
+  local target="$1" source="$2"
+  if [[ -L "$target" && -e "$target" && "$target" -ef "$source" ]]; then
+    ok "$target"
+  else
+    warn "$target should link to $source; rerun the matching installer"
+  fi
+}
+
+check_tool() {
+  local tool
+  for tool in "$@"; do
+    if command -v "$tool" >/dev/null 2>&1; then
+      ok "$tool available"
+      return
+    fi
+  done
+  warn "Missing tool: $* (run the matching installer)"
+}
+
+root="$HOME/.dotfiles"
+check_link "$HOME/.zshrc" "$root/zsh/zshrc"
+check_link "$HOME/.config/git/ignore" "$root/git/ignore"
+check_link "$HOME/.local/bin/dotfiles" "$root/bin/dotfiles"
+
+for tool in zsh git micro less btop eza fzf rg zoxide; do
+  check_tool "$tool"
+done
+check_tool bat batcat
+check_tool fd fdfind
+
+ID=''
+[[ ! -r /etc/os-release ]] || source /etc/os-release
+if [[ ${DOTFILES_MINERVA:-} == 1 || -x "$HOME/.local/share/dotfiles/minerva/env/bin/zsh" ]]; then
+  plugin_root="$HOME/.local/share/dotfiles/minerva/plugins"
+  if [[ ${DOTFILES_MINERVA:-} != 1 ]]; then
+    warn 'Minerva tools installed; run this check inside ~/.local/bin/minerva-zsh'
+  fi
+elif [[ $ID == arch || $ID == cachyos ]]; then
+  plugin_root=/usr/share/zsh/plugins
+else
+  plugin_root=/usr/share
+fi
+for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
+  if [[ -r "$plugin_root/$plugin/$plugin.zsh" ]]; then
+    ok "$plugin available"
+  else
+    warn "$plugin missing from $plugin_root"
+  fi
+done
+if [[ $ID == steamos ]]; then
+  printf 'INFO  Run CLI checks inside: distrobox enter steamos-dotfiles\n'
+fi
+
+# Desktop checks are optional on servers and HPC nodes.
+if [[ ${XDG_CURRENT_DESKTOP:-} == *KDE* ]] || command -v kwriteconfig6 >/dev/null 2>&1; then
+  for tool in kreadconfig6 kwriteconfig6 python3 pgrep; do
+    check_tool "$tool"
+  done
+  if command -v fc-match >/dev/null 2>&1; then
+    font=$(fc-match --format '%{family}' 'Noto Sans Mono')
+    if [[ "$font" == *'Noto Sans Mono'* ]]; then
+      ok 'Noto Sans Mono installed'
+    else
+      warn 'Noto Sans Mono missing; Konsole will substitute another font'
+    fi
+  else
+    warn 'fc-match unavailable; cannot check the Konsole font'
+  fi
+  if [[ -r /usr/share/config.kcfg/kwin.kcfg ]] &&
+      grep -q 'name="PerOutputVirtualDesktops"' /usr/share/config.kcfg/kwin.kcfg; then
+    ok 'KWin schema supports per-screen virtual desktops'
+  else
+    warn 'Cannot verify per-screen desktops; requires Plasma 6.7+ on Wayland'
+  fi
+  if [[ ${XDG_SESSION_TYPE:-} != wayland ]]; then
+    warn 'Not in a Wayland session; per-screen desktop behavior cannot be verified'
+  fi
+  data="${XDG_DATA_HOME:-$HOME/.local/share}"
+  if [[ -f "$data/konsole/Dotfiles.profile" ]]; then
+    ok 'Konsole Dotfiles profile exists (values not compared)'
+  else
+    warn 'Konsole Dotfiles profile missing; use install/kde.py'
+  fi
+else
+  printf 'INFO  KDE checks skipped (no KDE session or KDE 6 tools detected)\n'
+fi
+
+printf '\n%d warning(s). No settings changed.\n' "$warnings"
+(( warnings == 0 ))

@@ -51,6 +51,9 @@ activation, or edits to `.bashrc`/`.bash_profile` are needed. Existing `.zshrc`
 files are backed up by the common symlink installer; `.zshrc.local` remains the
 place for machine-specific overrides.
 
+Run `dotfiles doctor` inside this shell to check installed links, CLI tools, and
+plugins. The checker does not change your configuration.
+
 Only the selected CLI executables enter PATH, not the entire Conda environment's
 `bin` directory. Research Python, compilers, and libraries are not activated by
 this setup. Lmod's Zsh initialization is loaded when its inherited `LMOD_DIR`
